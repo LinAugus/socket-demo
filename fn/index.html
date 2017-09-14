@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>socketio-demo</title>
+    </head>
+    <body>
+        <div class="">
+            <h1>socket</h1>
+            <button onClick="send2Back()">
+                发送数据给后台
+            </button>
+            <button onClick="close()">
+                关闭连接
+            </button>
+            <button onClick="broadcast()">
+                广播
+            </button>
+            <button onClick="join()">
+                加入房间
+            </button>
+            <button onClick="view()">
+                查看当前连接数
+            </button>
+        </div>
+        <script src="//cdn.bootcss.com/socket.io/1.7.2/socket.io.js"></script>
+        <script>
+            // 后台交互
+            function send2Back() {
+                socket.emit('readed', {
+                    id: socket.id
+                })
+            }
+
+            function close() {
+                socket.emit('disconnect', {
+                    id: socket.id
+                })
+            }
+
+            function broadcast() {
+                socket.emit('bor');
+            }
+
+            function join() {
+                socket.emit('join');
+            }
+
+            function view() {
+                socket.emit('view');
+            }
+        </script>
+        <script>
+
+            var socket = io('http://localhost:9000');
+
+            socket.on('connect', function() {
+                console.log('connect success');
+            })
+            socket.on('disconnect', function() {
+                console.log('disconnected');
+            })
+
+            // 广播
+            socket.on('broadcast', function(data) {
+                console.log(data);
+            });
+
+            socket.on('user disconnected', function() {
+                console.log('服务器返回：用户已断开连接');
+            });
+
+            socket.on('message', function (data) {
+                console.log(data);
+            });
+
+            // 监听单个事件
+            // socket.on('news', function (data) {
+            //     console.log(data);
+            // });
+        </script>
+    </body>
+</html>
