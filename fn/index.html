@@ -19,6 +19,9 @@
             <button onClick="join()">
                 加入房间
             </button>
+             <button onClick="leave()">
+                离开房间
+            </button>
             <button onClick="view()">
                 查看当前连接数
             </button>
@@ -48,6 +51,10 @@
 
             function view() {
                 socket.emit('view');
+            }
+
+            function leave() {
+                socket.emit('toleave')
             }
         </script>
         <script>

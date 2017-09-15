@@ -1,11 +1,11 @@
 var app = require('http').createServer(handler)
-var io = require('socket.io')(app);
-var fs = require('fs');
+var io  = require('socket.io')(app);
+var fs  = require('fs');
 
 app.listen(9000);
 
 function handler(req, res) {
-    fs.readFile(__dirname + '/fn/index.html', function(err, data) {
+    fs.readFile(__dirname + '/fn/index.html', function (err, data) {
         if (err) {
             res.writeHead(500);
             return res.end('Error loading index.html');
@@ -16,19 +16,34 @@ function handler(req, res) {
     });
 }
 
-console.log(app);
-
+// 连接数
 app.conn = [];
+
+// class Soc {
+//     constructor() {
+//         this.init();
+//         this.io = io;
+//     }
+
+//     init() {
+//         io.on('connection', function(socket) {
+//             this.socket = socket;
+//         });
+//     }
+// }
+
+
 
 io.on('connection', function (socket) {
     console.log('connect success');
 
+    // 添加连接
     app.conn.push(socket.id);
 
     // io.emit('this', { will: 'be received by everyone'});
 
     // 广播
-    socket.on('bor', function() {
+    socket.on('bor', function () {
         io.emit('broadcast', '这是系统消息'); // emit an event to all connected sockets
     });
     socket.broadcast.emit('user connected');
@@ -40,17 +55,17 @@ io.on('connection', function (socket) {
         console.log('收到前端的信息：', data);
     });
 
-    socket.on('join', function() {
+    socket.on('join', function () {
         socket.join('haha');
         socket.broadcast.to('haha').emit('message', '你已加入haha房间');
     })
 
-    socket.on('toleave', function(){
+    socket.on('toleave', function () {
+        console.log('haha房间里的socket:', socket.rooms);
         socket.leave('haha');
-        console.log('haha房间里的socket:', io.sockets.clients('haha'));
     })
 
-    socket.on('view', function() {
+    socket.on('view', function () {
         let clients;
         clients = io.sockets.clients();
         console.log(Object.keys(clients));
@@ -64,6 +79,7 @@ io.on('connection', function (socket) {
     // 监听失联事件
     socket.on('disconnect', function () {
 
+        // 删除当前连接
         app.conn.forEach((val, idx) => {
             if (val == socket.id) {
                 app.conn.splice(idx, 1);
